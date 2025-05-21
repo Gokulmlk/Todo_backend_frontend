@@ -1,50 +1,60 @@
 import { useState } from "react";
 
-export function CreateTodo(){
-    const [title, setTitle] = useState("")
-    const [description, setDescription] = useState("")
-    return(
+export function CreateTodo({ onTodoAdded }) {
+  const [title, setTitle] = useState("");
+  const [description, setDescription] = useState("");
+
+  const handleAdd = () => {
+    fetch("http://localhost:3000/todo", {
+      method: "POST",
+      body: JSON.stringify({
+        title: title,
+        description: description,
+      }),
+      headers: {
+        "Content-Type": "application/json",
+      },
+    })
+      .then(async (res) => {
+        const json = await res.json();
+        alert("Todo added");
+
+        // ✅ Notify parent to refresh todos
+        if (onTodoAdded) {
+          onTodoAdded();
+        }
+
+        // Optionally reset inputs
+        setTitle("");
+        setDescription("");
+      })
+      .catch((err) => {
+        console.error("Error adding todo:", err);
+        alert("Failed to add todo");
+      });
+  };
+
+  return (
     <div>
-        <input 
-        style={{
-            padding:10,
-            margin:10
-        }}
-        type="text" placeholder="title" onChange={function(e){
-            const value= e.target.value;
-            setTitle(e.target.value);
-        }}/><br />
-        <input
-        style={{
-            padding:10,
-            margin:10
-        }}
-        type="text" placeholder="description" onChange={function(e){
-            const value= e.target.value;
-            setDescription(e.target.value);
-        }}/><br />
-        <button
-        style={{
-            padding:10,
-            margin:10
-        }}
-        onClick={()=>{
-            fetch("http://localhost:3000/todo",{
-                method:"POST",
-                body:JSON.stringify({
-                    title:title,
-                    description:description
-                }),
-                headers:{
-                    "contentType":"application/json"
-                }
-            })
-                .then(async function(res){
-                    const json = await res.json();
-                    alert("Todo added")
-                })
-            
-        }}>Add a todo</button>
+      <input
+        style={{ padding: 10, margin: 10 }}
+        type="text"
+        placeholder="title"
+        value={title}
+        onChange={(e) => setTitle(e.target.value)}
+      />
+      <br />
+      <input
+        style={{ padding: 10, margin: 10 }}
+        type="text"
+        placeholder="description"
+        value={description}
+        onChange={(e) => setDescription(e.target.value)}
+      />
+      <br />
+      <button style={{ padding: 10, margin: 10 }} onClick={handleAdd}>
+        Add a todo
+      </button>
     </div>
-    )
+  );
 }

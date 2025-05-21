@@ -1,4 +1,5 @@
 const express = require("express");
+const cors = require("cors");
 const { createTodo } = require("./types");
 const { todo } = require("./db");
 const app = express();
@@ -57,5 +58,6 @@ app.post("/completed", async function(req,res){
 })
 
 app.listen(3000,function(){
+    
     console.log("Port is ready")
 })

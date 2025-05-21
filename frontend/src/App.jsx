@@ -7,22 +7,28 @@ import { useEffect } from 'react'
 
 
 function App() {
-  
-  const [todos, setTodos] = useState([])
+  const [todos, setTodos] = useState([]);
 
-  
+  const fetchTodos = () => {
     fetch("http://localhost:3000/todo")
-     .then(async function(res){
-      const json = await res.json();
-      setTodos(json.todos)
-     })
+      .then(async (res) => {
+        const json = await res.json();
+        setTodos(json.todos);
+      })
+      .catch((err) => console.error(err));
+  };
+
+  useEffect(() => {
+    fetchTodos();
+  }, []);
+
   return (
     <>
-    Hidfesdfdsfd
-      <CreateTodo></CreateTodo>
-      <Todo todos={todos}></Todo>
+      <CreateTodo onTodoAdded={fetchTodos} />
+      <Todo todos={todos} />
     </>
-  )
+  );
 }
+
 
 export default App
